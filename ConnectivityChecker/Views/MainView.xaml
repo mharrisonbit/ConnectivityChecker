@@ -10,30 +10,29 @@
                      Priority="0"
                      Command="{Binding ShareIssuesBtn}"/>
     </ContentPage.ToolbarItems>
-    <Grid RowDefinitions="25*, 25*, 25*, 25*"
-          ColumnDefinitions="25*, 25*"
+    <Grid RowDefinitions="50, 50, 50, 30, *"
           Margin="20">
         <Button Text="{Binding BtnActionTxt, StringFormat='{0} Connectivity Check'}"
                 Command="{Binding StartCheckingBtn}"
-                Grid.Row="0"
-                Grid.Column="0"
-                Grid.ColumnSpan="2"/>
+                Grid.Row="0"/>
         <Button Text="Get Logs"
                 Command="{Binding GetLogsBtn}"
-                Grid.Row="1"
-                Grid.Column="0"
-                Grid.ColumnSpan="2"/>
-        <ScrollView Grid.Row="2"
-                    Grid.RowSpan="2"
-                    Grid.Column="0"
-                    Grid.ColumnSpan="2">
+                Grid.Row="1"/>
+        <Label Text="{Binding SecondsTillNextCheck, StringFormat='{0} seconds till next check'}"
+               Grid.Row="2"
+               HorizontalTextAlignment="Center"
+               FontSize="Large"/>
+        <ProgressBar Grid.Row="3"
+                     Progress="{Binding ProgressBarValue}"/>
+        <ScrollView Grid.Row="4">
             <StackLayout BindableLayout.ItemsSource="{Binding ListOfIssues}"
                          Orientation="Vertical"
                          Margin="20,0,0,0"
                          BackgroundColor="Transparent">
                 <BindableLayout.ItemTemplate>
                     <DataTemplate>
-                        <Label Text="{Binding LostOccurred}"/>
+                        <Label Text="{Binding LostOccurred}"
+                               FontSize="Medium"/>
                     </DataTemplate>
                 </BindableLayout.ItemTemplate>
             </StackLayout>

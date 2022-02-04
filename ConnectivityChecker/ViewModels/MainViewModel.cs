@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using ConnectivityChecker.Interfaces;
 using ConnectivityChecker.Models;
@@ -23,6 +24,8 @@ namespace ConnectivityChecker.ViewModels
         private readonly IReader reader;
         private readonly IShare share;
 
+        private readonly int timeToWait = 120;
+
         public MainViewModel(INavigationService navigationService, ILogger logger, IReader reader, IShare share) : base(navigationService)
         {
             this.logger = logger;
@@ -30,9 +33,10 @@ namespace ConnectivityChecker.ViewModels
             this.share = share;
 
             StartCheckingBtn = new DelegateCommand(async () => await StartConnectivityCheck());
-            GetLogsBtn = new DelegateCommand(async () => await GetLogsCmd()).ObservesCanExecute(() => IsEnabled);
+            GetLogsBtn = new DelegateCommand(async () => await BuildListOfIssues()).ObservesCanExecute(() => IsEnabled);
             ShareIssuesBtn = new DelegateCommand(async () => await ShareAllIssuesCmd());
             BtnActionTxt = "Start";
+            SecondsTillNextCheck = timeToWait.ToString();
 
             IsEnabled = true;
             if (DeviceInfo.Platform == DevicePlatform.macOS)
@@ -41,6 +45,7 @@ namespace ConnectivityChecker.ViewModels
             }
 
             ListOfIssues = new ObservableCollection<Issue>();
+            ProgressBarValue = new int();
         }
 
         bool _IsEnabled;
@@ -50,11 +55,25 @@ namespace ConnectivityChecker.ViewModels
             set { SetProperty(ref _IsEnabled, value); }
         }
 
+        decimal _ProgressBarValue;
+        public decimal ProgressBarValue
+        {
+            get { return _ProgressBarValue; }
+            set { SetProperty(ref _ProgressBarValue, value); }
+        }
+
         string _BtnActionTxt;
         public string BtnActionTxt
         {
             get { return _BtnActionTxt; }
             set { SetProperty(ref _BtnActionTxt, value); }
+        }
+
+        string _SecondsTillNextCheck;
+        public string SecondsTillNextCheck
+        {
+            get { return _SecondsTillNextCheck; }
+            set { SetProperty(ref _SecondsTillNextCheck, value); }
         }
 
         ObservableCollection<Issue> _ListOfIssues;
@@ -78,25 +97,42 @@ namespace ConnectivityChecker.ViewModels
                 }
                 catch (Exception)
                 {
-                    var timeItHappened = DateTime.Now.ToString("MM/dd/yyyy h:mm tt");
                     await this.logger.WriteLog(DateTime.Now);
-                    ListOfIssues.Add(new Issue
-                        {
-                            LostOccurred = timeItHappened
-                        }
-                    );
+                    await BuildListOfIssues();
                 }
-                ListOfIssues.Reverse();
-                //var timeToWait = 20000;//this is 10 seconds;
-                var timeToWait = 120000;//this is 2 minutes
-                await Task.Delay(timeToWait);
+
+                if (ListOfIssues.Count <=1)
+                {
+                    await BuildListOfIssues();
+                }
+
+                await LoopForPregressBar(timeToWait);
             }
         }
 
-        private async Task GetLogsCmd()
+        async Task LoopForPregressBar(decimal timeToWait)
+        {
+            try
+            {
+                ProgressBarValue = 0;
+                for (int i = 0; i < timeToWait; i++)
+                {
+                    //Thread.Sleep(100);
+                    await Task.Delay(1000);
+                    decimal percentComplete = i / timeToWait;
+                    ProgressBarValue = percentComplete;
+                    SecondsTillNextCheck = (timeToWait - i).ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        private async Task BuildListOfIssues()
         {
             ListOfIssues.Clear();
-            //this is going to get the logs and then share them in a string format.
             var answer = await this.reader.GetLogFile();
             answer.Reverse();
             ListOfIssues = new ObservableCollection<Issue>(answer);
@@ -105,10 +141,7 @@ namespace ConnectivityChecker.ViewModels
         private async Task ShareAllIssuesCmd()
         {
             var emailBody = "";
-            var answer = await this.reader.GetLogFile();
-            answer.Reverse();
-            ListOfIssues.Clear();
-            ListOfIssues = new ObservableCollection<Issue>(answer);
+            await BuildListOfIssues();
             
             //this is going to create an email that can be sent to who ever needs to see the issues.
             foreach (var issue in ListOfIssues)
