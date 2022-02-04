@@ -16,12 +16,14 @@
     <PackageReference Include="Prism.Forms" Version="8.1.97" />
     <PackageReference Include="Prism.DryIoc.Forms" Version="8.1.97" />
     <PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
+    <PackageReference Include="Xamarin.Essentials.Interfaces" Version="1.7.1" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Prism.Forms" />
     <None Remove="Prism.DryIoc.Forms" />
     <None Remove="sqlite-net-pcl" />
     <None Remove="Models\" />
+    <None Remove="Xamarin.Essentials.Interfaces" />
   </ItemGroup>
     <ItemGroup>
     <Folder Include="Views\" />

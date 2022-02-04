@@ -75,7 +75,14 @@ namespace ConnectivityChecker.Implementations
 
         public async Task<bool> DeleteAllIssues()
         {
-            await Task.Delay(500);
+            try
+            {
+                await Init();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
             return false;
         }
     }

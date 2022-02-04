@@ -3,6 +3,8 @@ using ConnectivityChecker.Interfaces;
 using ConnectivityChecker.ViewModels;
 using ConnectivityChecker.Views;
 using Prism.Ioc;
+using Xamarin.Essentials.Implementation;
+using Xamarin.Essentials.Interfaces;
 using Xamarin.Forms;
 
 namespace ConnectivityChecker
@@ -32,6 +34,7 @@ namespace ConnectivityChecker
 
             containerRegistry.RegisterSingleton<ILogger, LogWriter>();
             containerRegistry.RegisterSingleton<IReader, LogReader>();
+            containerRegistry.RegisterSingleton<IShare, ShareImplementation>();
         }
     }
 }

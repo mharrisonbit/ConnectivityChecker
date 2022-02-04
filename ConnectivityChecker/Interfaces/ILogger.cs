@@ -5,6 +5,7 @@ namespace ConnectivityChecker.Interfaces
 {
     public interface ILogger
     {
+        Task<bool> DeleteAllIssues();
         Task WriteLog(DateTime happenAt);
     }
 }

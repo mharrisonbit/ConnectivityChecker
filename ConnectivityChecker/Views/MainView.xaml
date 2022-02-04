@@ -4,6 +4,12 @@
              x:Class="ConnectivityChecker.Views.MainView"
              xmlns:prism="http://prismlibrary.com"
              prism:ViewModelLocator.AutowireViewModel="True">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Send Issue List"
+                     Order="Primary"
+                     Priority="0"
+                     Command="{Binding ShareIssuesBtn}"/>
+    </ContentPage.ToolbarItems>
     <Grid RowDefinitions="25*, 25*, 25*, 25*"
           ColumnDefinitions="25*, 25*"
           Margin="20">
@@ -17,19 +23,20 @@
                 Grid.Row="1"
                 Grid.Column="0"
                 Grid.ColumnSpan="2"/>
-        <StackLayout BindableLayout.ItemsSource="{Binding ListOfIssues}"
-                     Orientation="Vertical"
-                     Margin="20,0,0,0"
-                     BackgroundColor="Transparent"
-                     Grid.Row="2"
-                     Grid.RowSpan="2"
-                     Grid.Column="0"
-                     Grid.ColumnSpan="2">
-            <BindableLayout.ItemTemplate>
-                <DataTemplate>
-                    <Label Text="{Binding LostOccurred}"/>
-                </DataTemplate>
-            </BindableLayout.ItemTemplate>
-        </StackLayout>
+        <ScrollView Grid.Row="2"
+                    Grid.RowSpan="2"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="2">
+            <StackLayout BindableLayout.ItemsSource="{Binding ListOfIssues}"
+                         Orientation="Vertical"
+                         Margin="20,0,0,0"
+                         BackgroundColor="Transparent">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate>
+                        <Label Text="{Binding LostOccurred}"/>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </StackLayout>
+        </ScrollView>
      </Grid>
 </ContentPage>
