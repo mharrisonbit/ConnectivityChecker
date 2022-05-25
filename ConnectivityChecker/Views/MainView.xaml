@@ -23,7 +23,8 @@
                HorizontalTextAlignment="Center"
                FontSize="Large"/>
         <ProgressBar Grid.Row="3"
-                     Progress="{Binding ProgressBarValue}"/>
+                     Progress="{Binding ProgressBarValue}"
+                     Rotation="180"/>
         <ScrollView Grid.Row="4">
             <StackLayout BindableLayout.ItemsSource="{Binding ListOfIssues}"
                          Orientation="Vertical"

@@ -114,13 +114,13 @@ namespace ConnectivityChecker.ViewModels
         {
             try
             {
-                ProgressBarValue = 0;
+                ProgressBarValue = 1;
                 for (int i = 0; i < timeToWait; i++)
                 {
                     //Thread.Sleep(100);
                     await Task.Delay(1000);
                     decimal percentComplete = i / timeToWait;
-                    ProgressBarValue = percentComplete;
+                    ProgressBarValue = 1 - percentComplete;
                     SecondsTillNextCheck = (timeToWait - i).ToString();
                 }
             }
